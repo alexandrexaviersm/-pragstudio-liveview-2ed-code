@@ -1,5 +1,7 @@
 defmodule LiveViewStudio.Flights do
   def search_by_airport(airport) do
+    Process.sleep(4000)
+
     list_flights()
     |> Enum.filter(&(&1.origin == airport || &1.destination == airport))
   end
@@ -75,6 +77,13 @@ defmodule LiveViewStudio.Flights do
         destination: "DEN",
         departure_time: time_from_now(days: 3, hours: 2),
         arrival_time: time_from_now(days: 3, hours: 5)
+      },
+      %{
+        number: "123",
+        origin: "BRA",
+        destination: "EUA",
+        departure_time: time_from_now(days: 5, hours: 6),
+        arrival_time: time_from_now(days: 7, hours: 2)
       }
     ]
   end
