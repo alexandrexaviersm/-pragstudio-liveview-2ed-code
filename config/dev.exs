@@ -5,7 +5,7 @@ config :live_view_studio, LiveViewStudio.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "live_view_studio_dev",
+  database: "live_view_studio_2ed_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

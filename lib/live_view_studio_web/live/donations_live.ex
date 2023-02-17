@@ -11,6 +11,6 @@ defmodule LiveViewStudioWeb.DonationsLive do
         donations: donations
       )
 
-    {:ok, socket, temporary_assigns: [donations: []]}
+    {:ok, socket}
   end
 end

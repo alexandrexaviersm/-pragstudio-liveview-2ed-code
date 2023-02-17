@@ -10,6 +10,6 @@ defmodule LiveViewStudioWeb.PizzaOrdersLive do
         pizza_orders: PizzaOrders.list_pizza_orders()
       )
 
-    {:ok, socket, temporary_assigns: [pizza_orders: []]}
+    {:ok, socket}
   end
 end

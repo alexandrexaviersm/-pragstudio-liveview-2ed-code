@@ -1,5 +1,5 @@
 defmodule LiveViewStudio.Airports do
-  def suggest(""), do: []
+  def suggest(""), do: %{}
 
   def suggest(prefix) do
     Map.filter(list_airports(), fn {code, _} ->

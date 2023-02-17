@@ -4,11 +4,13 @@ defmodule LiveViewStudioWeb.AthletesLive do
   alias LiveViewStudio.Athletes
 
   def mount(_params, _session, socket) do
-    {:ok,
-     assign(socket,
-       filter: %{sport: "", status: ""},
-       athletes: Athletes.list_athletes()
-     )}
+    socket =
+      assign(socket,
+        filter: %{sport: "", status: ""},
+        athletes: Athletes.list_athletes()
+      )
+
+    {:ok, socket}
   end
 
   def render(assigns) do
