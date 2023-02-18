@@ -1,6 +1,6 @@
 defmodule LiveViewStudio.Flights do
   def search_by_airport(airport) do
-    Process.sleep(4000)
+    Process.sleep(2000)
 
     airport = String.upcase(airport)
 
