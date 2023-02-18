@@ -30,7 +30,7 @@ defmodule LiveViewStudioWeb.FlightsLive do
           autocomplete="off"
           readonly={@loading}
           list="matches"
-          phx-debounce="1000"
+          phx-debounce="250"
         />
 
         <button>
