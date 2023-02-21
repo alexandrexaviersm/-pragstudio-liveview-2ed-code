@@ -35,6 +35,10 @@ defmodule LiveViewStudioWeb.BoatsLive do
     <.promo>
       Hurry, only 3 boats left!
     </.promo>
+
+    <.badge label="filmed" id="status-filmed" phx-click="remove" />
+    <.badge label="edited" class="bg-blue-300 font-bold" />
+    <.badge label="released" />
     """
   end
 

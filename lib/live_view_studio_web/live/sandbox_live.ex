@@ -77,7 +77,7 @@ defmodule LiveViewStudioWeb.SandboxLive do
     {:noreply, socket}
   end
 
-  def handle_event("get-quote", params, socket) do
+  def handle_event("get-quote", _params, socket) do
     price = Sandbox.calculate_price(socket.assigns.weight)
 
     {:noreply, assign(socket, price: price)}
