@@ -21,42 +21,54 @@ defmodule LiveViewStudioWeb.SandboxLive do
     ~H"""
     <h1>Build A Sandbox</h1>
     <div id="sandbox">
-      <form phx-change="calculate" phx-submit="get-quote">
-        <div class="fields">
-          <div>
-            <label for="length">Length</label>
-            <div class="input">
-              <input type="number" name="length" value={@length} />
-              <span class="unit">feet</span>
-            </div>
-          </div>
-          <div>
-            <label for="width">Width</label>
-            <div class="input">
-              <input type="number" name="width" value={@width} />
-              <span class="unit">feet</span>
-            </div>
-          </div>
-          <div>
-            <label for="depth">Depth</label>
-            <div class="input">
-              <input type="number" name="depth" value={@depth} />
-              <span class="unit">inches</span>
-            </div>
-          </div>
-        </div>
-        <div class="weight">
-          You need <%= @weight %> pounds of sand 🏝
-        </div>
-        <button type="submit">
-          Get A Quote
-        </button>
-      </form>
+      <.calculate_form length={@length} width={@width} depth={@depth} weight={@weight} />
+
       <div class="quote" :if={@price}>
         Get your personal beach today for only
         <%= number_to_currency(@price) %>
       </div>
     </div>
+    """
+  end
+
+  attr :length, :string, required: true
+  attr :width, :string, required: true
+  attr :depth, :string, required: true
+  attr :weight, :string, required: true
+
+  def calculate_form(assigns) do
+    ~H"""
+    <form phx-change="calculate" phx-submit="get-quote">
+      <div class="fields">
+        <div>
+          <label for="length">Length</label>
+          <div class="input">
+            <input type="number" name="length" value={@length} />
+            <span class="unit">feet</span>
+          </div>
+        </div>
+        <div>
+          <label for="width">Width</label>
+          <div class="input">
+            <input type="number" name="width" value={@width} />
+            <span class="unit">feet</span>
+          </div>
+        </div>
+        <div>
+          <label for="depth">Depth</label>
+          <div class="input">
+            <input type="number" name="depth" value={@depth} />
+            <span class="unit">inches</span>
+          </div>
+        </div>
+      </div>
+      <div class="weight">
+        You need <%= @weight %> pounds of sand 🏝
+      </div>
+      <button type="submit">
+        Get A Quote
+      </button>
+    </form>
     """
   end
 
