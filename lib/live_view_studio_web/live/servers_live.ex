@@ -32,42 +32,6 @@ defmodule LiveViewStudioWeb.ServersLive do
      )}
   end
 
-  def render(assigns) do
-    ~H"""
-    <h1>Servers</h1>
-    <div id="servers">
-      <div class="sidebar">
-        <div class="nav">
-          <.link
-            :for={server <- @servers}
-            patch={~p"/servers/#{server}"}
-            class={if server == @selected_server, do: "selected"}
-          >
-            <span class={server.status}></span>
-            <%= server.name %>
-          </.link>
-        </div>
-        <div class="coffees">
-          <button phx-click="drink">
-            <img src="/images/coffee.svg" />
-            <%= @coffees %>
-          </button>
-        </div>
-      </div>
-      <div class="main">
-        <div class="wrapper">
-          <.server server={@selected_server} />
-          <div class="links">
-            <.link navigate={~p"/light"}>
-              Adjust Lights
-            </.link>
-          </div>
-        </div>
-      </div>
-    </div>
-    """
-  end
-
   attr :server, Servers.Server, required: true
 
   def server(assigns) do

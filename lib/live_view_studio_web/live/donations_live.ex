@@ -37,9 +37,20 @@ defmodule LiveViewStudioWeb.DonationsLive do
       ~p"/donations?#{%{sort_by: @sort_by, sort_order: next_sort_order(@options.sort_order)}}"
     }>
       <%= render_slot(@inner_block) %>
+      <%= sort_indicator(@sort_by, @options) %>
     </.link>
     """
   end
+
+  defp sort_indicator(column, %{sort_by: sort_by, sort_order: sort_order})
+       when column == sort_by do
+    case sort_order do
+      :asc -> "👆"
+      :desc -> "👇"
+    end
+  end
+
+  defp sort_indicator(_, _), do: ""
 
   defp next_sort_order(:asc), do: :desc
   defp next_sort_order(:desc), do: :asc
