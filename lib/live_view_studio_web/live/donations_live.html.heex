@@ -5,7 +5,11 @@
       <thead>
         <tr>
           <th class="item">
-            Item
+            <.link patch={
+              ~p"/donations?#{%{sort_by: :item, sort_order: :asc}}"
+            }>
+              Item
+            </.link>
           </th>
           <th>
             Quantity
