@@ -62,9 +62,12 @@
           Previous
         </.link>
 
-        <.link patch={
-          ~p"/donations?#{%{@options | page: @options.page + 1}}"
-        }>
+        <.link
+          :if={more_pages?(@options, @donation_count)}
+          patch={
+            ~p"/donations?#{%{@options | page: @options.page + 1}}"
+          }
+        >
           Next
         </.link>
       </div>

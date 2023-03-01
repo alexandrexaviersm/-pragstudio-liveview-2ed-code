@@ -26,7 +26,8 @@ defmodule LiveViewStudioWeb.DonationsLive do
     socket =
       assign(socket,
         donations: donations,
-        options: options
+        options: options,
+        donation_count: Donations.count_donations()
       )
 
     {:noreply, socket}
@@ -106,4 +107,8 @@ defmodule LiveViewStudioWeb.DonationsLive do
 
   defp next_sort_order(:asc), do: :desc
   defp next_sort_order(:desc), do: :asc
+
+  defp more_pages?(options, donation_count) do
+    options.page * options.per_page < donation_count
+  end
 end
