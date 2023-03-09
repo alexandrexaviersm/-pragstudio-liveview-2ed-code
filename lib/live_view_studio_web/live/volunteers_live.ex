@@ -35,10 +35,6 @@ defmodule LiveViewStudioWeb.VolunteersLive do
         </.button>
       </.form>
 
-      <pre>
-        <%#= inspect(@form, pretty: true) %>
-      </pre>
-
       <div
         :for={volunteer <- @volunteers}
         class={"volunteer #{if volunteer.checked_out, do: "out"}"}
@@ -68,13 +64,20 @@ defmodule LiveViewStudioWeb.VolunteersLive do
             :volunteers,
             fn volunteers -> [volunteer | volunteers] end
           )
+          |> put_flash(:info, "Volunteer successfully checked in!")
 
         changeset = Volunteers.change_volunteer(%Volunteer{})
 
-        {:noreply, assign(socket, :form, to_form(changeset))}
+        {:noreply, assign_form(socket, changeset)}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :form, to_form(changeset))}
+        socket = put_flash(socket, :error, "Volunteer has not successfully checked in!")
+
+        {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end
