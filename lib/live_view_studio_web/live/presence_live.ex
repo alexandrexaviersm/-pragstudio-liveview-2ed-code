@@ -18,9 +18,9 @@ defmodule LiveViewStudioWeb.PresenceLive do
       </div>
       <div class="video" phx-click="toggle-playing">
         <%= if @is_playing do %>
-          <Heroicons.pause_circle solid />
+          <.icon name="hero-pause-circle-solid" />
         <% else %>
-          <Heroicons.play_circle solid />
+          <.icon name="hero-play-circle-solid" />
         <% end %>
       </div>
     </div>
