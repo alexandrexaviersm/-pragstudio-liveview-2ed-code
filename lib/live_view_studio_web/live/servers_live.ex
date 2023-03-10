@@ -7,13 +7,10 @@ defmodule LiveViewStudioWeb.ServersLive do
   def mount(_params, _session, socket) do
     servers = Servers.list_servers()
 
-    changeset = Servers.change_server(%Server{})
-
     socket =
       assign(socket,
         servers: servers,
-        coffees: 0,
-        form: to_form(changeset)
+        coffees: 0
       )
 
     {:ok, socket}
@@ -30,10 +27,21 @@ defmodule LiveViewStudioWeb.ServersLive do
   end
 
   def handle_params(_, _uri, socket) do
-    {:noreply,
-     assign(socket,
-       selected_server: hd(socket.assigns.servers)
-     )}
+    socket =
+      if socket.assigns.live_action == :new do
+        changeset = Servers.change_server(%Server{})
+
+        assign(socket,
+          selected_server: nil,
+          form: to_form(changeset)
+        )
+      else
+        assign(socket,
+          selected_server: hd(socket.assigns.servers)
+        )
+      end
+
+    {:noreply, socket}
   end
 
   attr :form, :any, required: true, doc: "the datastructure for the form"
@@ -53,6 +61,9 @@ defmodule LiveViewStudioWeb.ServersLive do
       <.button phx-disable-with="Saving...">
         Save
       </.button>
+      <.link patch={~p"/servers"} class="cancel">
+        Cancel
+      </.link>
     </.form>
     """
   end
@@ -102,6 +113,8 @@ defmodule LiveViewStudioWeb.ServersLive do
             :servers,
             fn servers -> [server | servers] end
           )
+
+        socket = push_patch(socket, to: ~p"/servers/#{server}")
 
         changeset = Servers.change_server(%Server{})
 

@@ -2,6 +2,9 @@
 <div id="servers">
   <div class="sidebar">
     <div class="nav">
+      <.link patch={~p"/servers/new"} class="add">
+        + Add New Server
+      </.link>
       <.link
         :for={server <- @servers}
         patch={~p"/servers/#{server}"}
@@ -20,8 +23,11 @@
   </div>
   <div class="main">
     <div class="wrapper">
-      <.server_form form={@form} />
-      <.server server={@selected_server} />
+      <%= if @live_action == :new do %>
+        <.server_form form={@form} />
+      <% else %>
+        <.server server={@selected_server} />
+      <% end %>
       <div class="links">
         <.link navigate={~p"/light"}>
           Adjust Lights
