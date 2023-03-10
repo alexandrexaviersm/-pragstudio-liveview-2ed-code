@@ -26,22 +26,8 @@ defmodule LiveViewStudioWeb.ServersLive do
      )}
   end
 
-  def handle_params(_, _uri, socket) do
-    socket =
-      if socket.assigns.live_action == :new do
-        changeset = Servers.change_server(%Server{})
-
-        assign(socket,
-          selected_server: nil,
-          form: to_form(changeset)
-        )
-      else
-        assign(socket,
-          selected_server: hd(socket.assigns.servers)
-        )
-      end
-
-    {:noreply, socket}
+  def handle_params(params, _uri, socket) do
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   attr :form, :any, required: true, doc: "the datastructure for the form"
@@ -127,5 +113,15 @@ defmodule LiveViewStudioWeb.ServersLive do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp apply_action(socket, :index, _params) do
+    assign(socket, selected_server: hd(socket.assigns.servers))
+  end
+
+  defp apply_action(socket, :new, _params) do
+    changeset = Servers.change_server(%Server{})
+
+    assign(socket, selected_server: nil, form: to_form(changeset))
   end
 end

@@ -24,7 +24,7 @@ defmodule LiveViewStudioWeb.Router do
     live "/sales", SalesLive
     live "/flights", FlightsLive
     live "/boats", BoatsLive
-    live "/servers", ServersLive
+    live "/servers", ServersLive, :index
     live "/servers/new", ServersLive, :new
     live "/servers/:id", ServersLive
     live "/donations", DonationsLive
