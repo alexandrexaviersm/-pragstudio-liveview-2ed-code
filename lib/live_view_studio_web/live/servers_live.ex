@@ -70,9 +70,13 @@ defmodule LiveViewStudioWeb.ServersLive do
     <div class="server">
       <div class="header">
         <h2><%= @server.name %></h2>
-        <span class={@server.status}>
+        <button
+          class={@server.status}
+          phx-click="toggle-status"
+          phx-value-id={@server.id}
+        >
           <%= @server.status %>
-        </span>
+        </button>
       </div>
       <div class="body">
         <div class="row">
@@ -97,6 +101,55 @@ defmodule LiveViewStudioWeb.ServersLive do
 
   def handle_event("drink", _, socket) do
     {:noreply, update(socket, :coffees, &(&1 + 1))}
+  end
+
+  def handle_event("toggle-status", %{"id" => id}, socket) do
+    server = Servers.get_server!(id)
+
+    # Update the server's status to the opposite of its current status:
+
+    new_status = if server.status == "up", do: "down", else: "up"
+
+    {:ok, server} =
+      Servers.update_server(
+        server,
+        %{status: new_status}
+      )
+
+    # Assign the updated server as the selected server so
+    # that the server details re-render:
+
+    socket = assign(socket, selected_server: server)
+
+    # Three ways to update the server's red/green
+    # status indicator in the sidebar:
+
+    # 1. Refetch the list of servers and assign them back.
+
+    socket = assign(socket, :servers, Servers.list_servers())
+
+    # 2. Or, to avoid another database hit, find the matching
+    # server in the current list of servers, replace it, and
+    # assign the resulting list back:
+
+    servers =
+      Enum.map(socket.assigns.servers, fn s ->
+        if s.id == server.id, do: server, else: s
+      end)
+
+    socket = assign(socket, servers: servers)
+
+    # 3. Here's another way to do the same thing without
+    # having to assign the servers back to the socket:
+
+    socket =
+      update(socket, :servers, fn servers ->
+        for s <- servers do
+          if s.id == server.id, do: server, else: s
+        end
+      end)
+
+    {:noreply, socket}
   end
 
   def handle_event("save", %{"server" => server_params}, socket) do
