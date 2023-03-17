@@ -2,13 +2,15 @@ defmodule LiveViewStudioWeb.VolunteersLive do
   use LiveViewStudioWeb, :live_view
 
   alias LiveViewStudio.Volunteers
-  alias LiveViewStudio.Volunteers.Volunteer
   alias LiveViewStudioWeb.VolunteerFormComponent
 
   def mount(_params, _session, socket) do
     volunteers = Volunteers.list_volunteers()
 
-    socket = stream(socket, :volunteers, volunteers)
+    socket =
+      socket
+      |> stream(:volunteers, volunteers)
+      |> assign(:count, length(volunteers))
 
     {:ok, socket}
   end
@@ -17,7 +19,11 @@ defmodule LiveViewStudioWeb.VolunteersLive do
     ~H"""
     <h1>Volunteer Check-In</h1>
     <div id="volunteer-checkin">
-      <.live_component module={VolunteerFormComponent} id={:new} />
+      <.live_component
+        module={VolunteerFormComponent}
+        id={:new}
+        count={@count}
+      />
 
       <div id="volunteers" phx-update="stream">
         <.volunteer
@@ -61,10 +67,29 @@ defmodule LiveViewStudioWeb.VolunteersLive do
     """
   end
 
+  def handle_event("delete", %{"id" => volunteer_id}, socket) do
+    volunteer = Volunteers.get_volunteer!(volunteer_id)
+    {:ok, _} = Volunteers.delete_volunteer(volunteer)
+
+    socket = update(socket, :count, &(&1 - 1))
+
+    {:noreply, stream_delete(socket, :volunteers, volunteer)}
+  end
+
   def handle_event("toggle-status", %{"id" => volunteer_id}, socket) do
     volunteer = Volunteers.get_volunteer!(volunteer_id)
     {:ok, volunteer} = Volunteers.toggle_status_volunteer(volunteer)
 
     {:noreply, stream_insert(socket, :volunteers, volunteer)}
+  end
+
+  def handle_info({:volunteer_created, volunteer}, socket) do
+    socket =
+      socket
+      |> update(:count, &(&1 + 1))
+      |> stream_insert(:volunteers, volunteer, at: 0)
+      |> put_flash(:info, "Volunteer successfully checked in!")
+
+    {:noreply, socket}
   end
 end

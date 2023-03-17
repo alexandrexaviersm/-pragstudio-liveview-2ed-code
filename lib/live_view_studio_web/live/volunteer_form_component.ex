@@ -10,9 +10,21 @@ defmodule LiveViewStudioWeb.VolunteerFormComponent do
     {:ok, assign(socket, :form, to_form(changeset))}
   end
 
+  def update(assigns, socket) do
+    socket =
+      socket
+      |> assign(assigns)
+      |> assign(:count, assigns.count + 1)
+
+    {:ok, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <div>
+      <div class="count">
+        Go for it! You'll be volunteer #<%= @count %>
+      </div>
       <.form
         for={@form}
         phx-submit="save"
@@ -40,13 +52,6 @@ defmodule LiveViewStudioWeb.VolunteerFormComponent do
     """
   end
 
-  def handle_event("delete", %{"id" => volunteer_id}, socket) do
-    volunteer = Volunteers.get_volunteer!(volunteer_id)
-    {:ok, _} = Volunteers.delete_volunteer(volunteer)
-
-    {:noreply, stream_delete(socket, :volunteers, volunteer)}
-  end
-
   def handle_event("validate", %{"volunteer" => volunteer_params}, socket) do
     changeset =
       %Volunteer{}
@@ -59,10 +64,7 @@ defmodule LiveViewStudioWeb.VolunteerFormComponent do
   def handle_event("save", %{"volunteer" => volunteer_params}, socket) do
     case Volunteers.create_volunteer(volunteer_params) do
       {:ok, volunteer} ->
-        socket =
-          socket
-          |> stream_insert(:volunteers, volunteer, at: 0)
-          |> put_flash(:info, "Volunteer successfully checked in!")
+        send(self(), {:volunteer_created, volunteer})
 
         changeset = Volunteers.change_volunteer(%Volunteer{})
 
