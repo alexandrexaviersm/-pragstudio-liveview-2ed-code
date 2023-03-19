@@ -24,7 +24,7 @@
   <div class="main">
     <div class="wrapper">
       <%= if @live_action == :new do %>
-        <.server_form form={@form} />
+        <.live_component module={ServerFormComponent} id="new" />
       <% else %>
         <.server server={@selected_server} />
       <% end %>

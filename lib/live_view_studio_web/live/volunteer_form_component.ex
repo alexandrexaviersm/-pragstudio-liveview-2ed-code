@@ -64,7 +64,7 @@ defmodule LiveViewStudioWeb.VolunteerFormComponent do
   def handle_event("save", %{"volunteer" => volunteer_params}, socket) do
     case Volunteers.create_volunteer(volunteer_params) do
       {:ok, volunteer} ->
-        send(self(), {:volunteer_created, volunteer})
+        send(self(), {__MODULE__, :volunteer_created, volunteer})
 
         changeset = Volunteers.change_volunteer(%Volunteer{})
 
