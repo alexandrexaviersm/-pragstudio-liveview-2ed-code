@@ -12,9 +12,17 @@ defmodule LiveViewStudio.Volunteers do
     Phoenix.PubSub.subscribe(LiveViewStudio.PubSub, "volunteers")
   end
 
-  def broadcast(message) do
-    Phoenix.PubSub.broadcast(LiveViewStudio.PubSub, "volunteers", message)
+  def broadcast({:ok, volunteer}, tag) do
+    Phoenix.PubSub.broadcast(
+      LiveViewStudio.PubSub,
+      "volunteers",
+      {tag, volunteer}
+    )
+
+    {:ok, volunteer}
   end
+
+  def broadcast({:error, _changeset} = error, _tag), do: error
 
   @doc """
   Returns the list of volunteers.
@@ -58,14 +66,10 @@ defmodule LiveViewStudio.Volunteers do
 
   """
   def create_volunteer(attrs \\ %{}) do
-    {:ok, volunteer} =
-      %Volunteer{}
-      |> Volunteer.changeset(attrs)
-      |> Repo.insert()
-
-    broadcast({:volunteer_created, volunteer})
-
-    {:ok, volunteer}
+    %Volunteer{}
+    |> Volunteer.changeset(attrs)
+    |> Repo.insert()
+    |> broadcast(:volunteer_created)
   end
 
   @doc """
@@ -84,6 +88,7 @@ defmodule LiveViewStudio.Volunteers do
     volunteer
     |> Volunteer.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:volunteer_updated)
   end
 
   @doc """
