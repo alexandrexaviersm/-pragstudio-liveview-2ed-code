@@ -5,6 +5,8 @@ defmodule LiveViewStudioWeb.ServersLive do
   alias LiveViewStudioWeb.ServerFormComponent
 
   def mount(_params, _session, socket) do
+    if connected?(socket), do: Servers.subscribe()
+
     servers = Servers.list_servers()
 
     socket =
@@ -77,16 +79,36 @@ defmodule LiveViewStudioWeb.ServersLive do
 
     new_status = if server.status == "up", do: "down", else: "up"
 
-    {:ok, server} =
+    {:ok, _server} =
       Servers.update_server(
         server,
         %{status: new_status}
       )
 
+    {:noreply, socket}
+  end
+
+  def handle_info({:server_created, server}, socket) do
+    socket =
+      update(
+        socket,
+        :servers,
+        fn servers -> [server | servers] end
+      )
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:server_updated, server}, socket) do
     # Assign the updated server as the selected server so
     # that the server details re-render:
 
-    socket = assign(socket, selected_server: server)
+    socket =
+      if server.id == socket.assigns.selected_server.id do
+        assign(socket, selected_server: server)
+      else
+        socket
+      end
 
     # Three ways to update the server's red/green
     # status indicator in the sidebar:
@@ -115,19 +137,6 @@ defmodule LiveViewStudioWeb.ServersLive do
           if s.id == server.id, do: server, else: s
         end
       end)
-
-    {:noreply, socket}
-  end
-
-  def handle_info({ServerFormComponent, :server_created, server}, socket) do
-    socket =
-      update(
-        socket,
-        :servers,
-        fn servers -> [server | servers] end
-      )
-
-    socket = push_patch(socket, to: ~p"/servers/#{server}")
 
     {:noreply, socket}
   end

@@ -10,12 +10,6 @@ defmodule LiveViewStudioWeb.ServerFormComponent do
     {:ok, assign_form(socket, changeset)}
   end
 
-  def update(assigns, socket) do
-    socket = assign(socket, assigns)
-
-    {:ok, socket}
-  end
-
   def render(assigns) do
     ~H"""
     <div>
@@ -61,8 +55,7 @@ defmodule LiveViewStudioWeb.ServerFormComponent do
   def handle_event("save", %{"server" => server_params}, socket) do
     case Servers.create_server(server_params) do
       {:ok, server} ->
-        send(self(), {__MODULE__, :server_created, server})
-        {:noreply, socket}
+        {:noreply, push_patch(socket, to: ~p"/servers/#{server}")}
 
       {:error, changeset} ->
         {:noreply, assign_form(socket, changeset)}
